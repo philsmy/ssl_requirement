@@ -39,11 +39,13 @@ module SslRequirement
 
   # Returns true if the current action is supposed to run as SSL
   def ssl_required?
-    (self.class.read_inheritable_attribute(:ssl_required_actions) || []).map(&:to_s).include?(action_name.to_s)
+    actions = self.class.read_inheritable_attribute(:ssl_required_actions)
+    SslRequirement.actions_include_action?( actions, params[:action])
   end
 
   def ssl_allowed?
-    (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).map(&:to_s).include?(action_name.to_s)
+    actions = self.class.read_inheritable_attribute(:ssl_allowed_actions)
+    SslRequirement.actions_include_action?( actions, params[:action])
   end
 
   private
@@ -60,5 +62,12 @@ module SslRequirement
       flash.keep
       return false
     end
+  end
+
+  def self.actions_include_action(actions, action)
+    actions = (actions || [])
+    actions = [:all] if actions.empty?
+    return true if actions.include? :all
+    actions.map(&:to_sym).include?(action.to_sym)
   end
 end
