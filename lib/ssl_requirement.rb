@@ -39,16 +39,22 @@ module SslRequirement
 
   # Returns true if the current action is supposed to run as SSL
   def ssl_required?
-    actions = self.class.read_inheritable_attribute(:ssl_required_actions)
-    SslRequirement.actions_include_action?( actions, params[:action])
+    ssl_actions_include_current_action(:ssl_required_actions)
   end
 
   def ssl_allowed?
-    actions = self.class.read_inheritable_attribute(:ssl_allowed_actions)
-    SslRequirement.actions_include_action?( actions, params[:action])
+    ssl_actions_include_current_action(:ssl_allowed_actions)
   end
 
   private
+
+  def ssl_actions_include_current_action (name)
+    actions = self.class.read_inheritable_attribute(name)
+    return unless actions
+    actions = [:all] if actions.empty?
+    return true if actions.include? :all
+    actions.map(&:to_sym).include?(params[:action].to_sym)
+  end
 
   def ensure_proper_protocol
     must_turn_on = (not request.ssl? and ssl_required?)
@@ -60,12 +66,5 @@ module SslRequirement
     redirect_to "#{protocol}://#{request.host}#{request.request_uri}"
     flash.keep
     return false
-  end
-
-  def self.actions_include_action?(actions, action)
-    return unless actions
-    actions = [:all] if actions.empty?
-    return true if actions.include? :all
-    actions.map(&:to_sym).include?(action.to_sym)
   end
 end
