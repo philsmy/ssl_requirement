@@ -1,21 +1,6 @@
-begin
-  require 'action_controller'
-rescue LoadError
-  if ENV['ACTIONCONTROLLER_PATH'].nil?
-    abort <<MSG
-Please set the ACTIONCONTROLLER_PATH environment variable to the directory
-containing the action_controller.rb file.
-MSG
-  else
-    $LOAD_PATH.unshift << ENV['ACTIONCONTROLLER_PATH']
-    begin
-      require 'action_controller'
-    rescue LoadError
-      abort "ActionController could not be found."
-    end
-  end
-end
-
+require 'rubygems'
+require 'actionpack'
+require 'action_controller'
 require 'action_controller/test_process'
 require 'test/unit'
 require "#{File.dirname(__FILE__)}/../lib/ssl_requirement"
@@ -50,7 +35,7 @@ class SslRequirementController < ActionController::Base
   end
 end
 
-class SslRequirementTest < Test::Unit::TestCase
+class SslRequirementTest < ActionController::TestCase
   def setup
     @controller = SslRequirementController.new
     @request    = ActionController::TestRequest.new
