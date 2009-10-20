@@ -27,22 +27,22 @@ module SslRequirement
   module ClassMethods
     # Specifies that the named actions requires an SSL connection to be performed (which is enforced by ensure_proper_protocol).
     def ssl_required(*actions)
-      write_inheritable_array(:ssl_required_actions, actions)
+      write_inheritable_array(:ssl_required_actions, actions.flatten)
     end
 
     def ssl_allowed(*actions)
-      write_inheritable_array(:ssl_allowed_actions, actions)
+      write_inheritable_array(:ssl_allowed_actions, actions.flatten)
     end
   end
   
   protected
     # Returns true if the current action is supposed to run as SSL
     def ssl_required?
-      (self.class.read_inheritable_attribute(:ssl_required_actions) || []).include?(action_name.to_sym)
+      (self.class.read_inheritable_attribute(:ssl_required_actions) || []).map(&:to_s).include?(action_name.to_s)
     end
     
     def ssl_allowed?
-      (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).include?(action_name.to_sym)
+      (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).map(&:to_s).include?(action_name.to_s)
     end
 
   private
