@@ -42,21 +42,21 @@ class SslRequirementTest < ActionController::TestCase
     @response   = ActionController::TestResponse.new
   end
   
-  def test_redirect_to_https_preserves_flash
+  test "redirect to https preserves flash" do 
     get :set_flash
     get :b
     assert_response :redirect
     assert_equal "bar", flash[:foo]
   end
   
-  def test_not_redirecting_to_https_does_not_preserve_the_flash
+  test "not redirecting to https does not preserve the flash" do 
     get :set_flash
     get :d
     assert_response :success
     assert_nil flash[:foo]
   end
   
-  def test_redirect_to_http_preserves_flash
+  test "redirect to http preserves flash" do 
     get :set_flash
     @request.env['HTTPS'] = "on"
     get :d
@@ -64,7 +64,7 @@ class SslRequirementTest < ActionController::TestCase
     assert_equal "bar", flash[:foo]
   end
   
-  def test_not_redirecting_to_http_does_not_preserve_the_flash
+  test "not redirecting to http does not preserve the flash" do 
     get :set_flash
     @request.env['HTTPS'] = "on"
     get :a
@@ -72,7 +72,7 @@ class SslRequirementTest < ActionController::TestCase
     assert_nil flash[:foo]
   end
   
-  def test_required_without_ssl
+  test "required without ssl" do 
     assert_not_equal "on", @request.env["HTTPS"]
     get :a
     assert_response :redirect
@@ -82,7 +82,7 @@ class SslRequirementTest < ActionController::TestCase
     assert_match %r{^https://}, @response.headers['Location']
   end
   
-  def test_required_with_ssl
+  test "required with ssl" do 
     @request.env['HTTPS'] = "on"
     get :a
     assert_response :success
@@ -90,26 +90,26 @@ class SslRequirementTest < ActionController::TestCase
     assert_response :success
   end
 
-  def test_disallowed_without_ssl
+  test "disallowed without ssl" do 
     assert_not_equal "on", @request.env["HTTPS"]
     get :d
     assert_response :success
   end
 
-  def test_disallowed_with_ssl
+  test "disallowed with ssl" do 
     @request.env['HTTPS'] = "on"
     get :d
     assert_response :redirect
     assert_match %r{^http://}, @response.headers['Location']
   end
 
-  def test_allowed_without_ssl
+  test "allowed without ssl" do 
     assert_not_equal "on", @request.env["HTTPS"]
     get :c
     assert_response :success
   end
 
-  def test_allowed_with_ssl
+  test "allowed with ssl" do 
     @request.env['HTTPS'] = "on"
     get :c
     assert_response :success
