@@ -51,20 +51,18 @@ module SslRequirement
   private
 
   def ensure_proper_protocol
-    return true if ssl_allowed?
+    must_turn_on = (not request.ssl? and ssl_required?)
+    must_turn_off = (request.ssl? and not ssl_allowed? and not ssl_required?)
 
-    if ssl_required? && !request.ssl?
-      redirect_to "https://" + request.host + request.request_uri
-      flash.keep
-      return false
-    elsif request.ssl? && !ssl_required?
-      redirect_to "http://" + request.host + request.request_uri
-      flash.keep
-      return false
-    end
+    return if not must_turn_on and not must_turn_off
+
+    protocol = (must_turn_on ? 'https' : 'http')
+    redirect_to "#{protocol}://#{request.host}#{request.request_uri}"
+    flash.keep
+    return false
   end
 
-  def self.actions_include_action(actions, action)
+  def self.actions_include_action?(actions, action)
     actions = (actions || [])
     actions = [:all] if actions.empty?
     return true if actions.include? :all
