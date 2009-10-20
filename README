@@ -1,7 +1,10 @@
-Fork of ssl_requirement
+Fork of ssl_requirement to add:
 
- - allow arrays as attributes
- - allow arrays of strings as attributes ['login', 'register'] / %w[login register]
+ - support :all -- `ssl_required :all`
+ - ssl_required without actions == `ssl_required :all`
+ - allow attributes as array `ssl_required [:login, :register]`
+ - allow arrays of strings as attributes `ssl_required 'login', 'register'` / `ssl_required %w[login register]`
+ - if a action is ssl_allowed and ssl_required -- it is ssl_required
 
 ` script/plugin install git://github.com/grosser/ssl_requirement.git `
 
