@@ -63,7 +63,7 @@ module SslRequirement
   end
 
   def self.actions_include_action?(actions, action)
-    actions = (actions || [])
+    return unless actions
     actions = [:all] if actions.empty?
     return true if actions.include? :all
     actions.map(&:to_sym).include?(action.to_sym)
