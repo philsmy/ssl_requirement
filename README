@@ -1,3 +1,11 @@
+Fork of ssl_requirement
+
+ - allow arrays as attributes
+ - allow arrays of strings as attributes ['login', 'register'] / %w[login register]
+
+` script/plugin install git://github.com/grosser/ssl_requirement.git `
+
+
 SSL Requirement
 ===============
 
