@@ -46,6 +46,10 @@ module SslRequirement
     ssl_actions_include_current_action(:ssl_allowed_actions)
   end
 
+  def ssl_host
+    request.host
+  end
+
   private
 
   def ssl_actions_include_current_action (name)
@@ -63,7 +67,7 @@ module SslRequirement
     return if not must_turn_on and not must_turn_off
 
     protocol = (must_turn_on ? 'https' : 'http')
-    redirect_to "#{protocol}://#{request.host}#{request.request_uri}"
+    redirect_to "#{protocol}://#{ssl_host}#{request.request_uri}"
     flash.keep
     return false
   end

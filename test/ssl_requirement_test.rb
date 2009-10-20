@@ -203,3 +203,38 @@ class SslAllowedAndRequiredTest < ActionController::TestCase
     assert_response :redirect
   end
 end
+
+class SslAllowedAndRequiredController < ActionController::Base
+  include SslRequirement
+  ssl_required
+
+  def a
+    render :nothing => true
+  end
+
+  protected
+
+  def ssl_host
+    'www.xxx.com'
+  end
+end
+
+class SslHostTest < ActionController::TestCase
+  def setup
+    @controller = SslAllowedAndRequiredController.new
+    @request    = ActionController::TestRequest.new
+    @response   = ActionController::TestResponse.new
+  end
+
+  test "uses ssl_host" do
+    @request.env['HTTPS'] = "on"
+    get :a
+    assert_response :success
+  end
+
+  test "diallowes without ssl" do
+    get :a
+    assert_response :redirect
+    assert_match %r{^https://www.xxx.com/}, @response.headers['Location']
+  end
+end
