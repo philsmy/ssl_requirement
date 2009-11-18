@@ -3,7 +3,9 @@ require 'actionpack'
 require 'action_controller'
 require 'action_controller/test_process'
 require 'test/unit'
-require "#{File.dirname(__FILE__)}/../lib/ssl_requirement"
+begin; require 'redgreen'; rescue LoadError; end
+$LOAD_PATH << 'lib'
+require 'ssl_requirement'
 
 ActionController::Base.logger = nil
 ActionController::Routing::Routes.reload rescue nil
