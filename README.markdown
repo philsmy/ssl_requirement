@@ -49,6 +49,24 @@ than just the declarative specification. Say, only premium accounts get SSL.
 
 When including SslRequirement it adds `before_filter :ensure_proper_protocol`.
 
+You can set where the ssl domain is:
+
+For SSL domains that differ from the domain of the redirecting site, add the 
+following code to development.rb / test.rb / production.rb:
+
+    # Redirects to https://secure.example.com instead of the default 
+    # https://www.example.com.
+    config.after_initialize do
+      SslRequirement.ssl_host = 'secure.example.com'
+    end
+
+To switch off the ssl, add the 
+following code to development.rb / test.rb / production.rb:
+		config.after_initialize do
+		 SslRequirement.skip_ssl = :false
+		end
+
+
 
 Authors
 =======

@@ -19,6 +19,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 module SslRequirement
+  mattr_accessor :ssl_host, :skip_ssl
+
   def self.included(controller)
     controller.extend(ClassMethods)
     controller.before_filter(:ensure_proper_protocol)
@@ -39,15 +41,16 @@ module SslRequirement
 
   # Returns true if the current action is supposed to run as SSL
   def ssl_required?
-    ssl_actions_include_current_action(:ssl_required_actions)
+    ssl_actions_include_current_action(:ssl_required_actions) && perform_ssl
   end
 
   def ssl_allowed?
     ssl_actions_include_current_action(:ssl_allowed_actions)
   end
 
-  def ssl_host
-    request.host
+  def perform_ssl
+    RAILS_DEFAULT_LOGGER.debug "skip_ssl: #{skip_ssl}"
+    skip_ssl != :false
   end
 
   private
@@ -67,7 +70,7 @@ module SslRequirement
     return if not must_turn_on and not must_turn_off
 
     protocol = (must_turn_on ? 'https' : 'http')
-    redirect_to "#{protocol}://#{ssl_host}#{request.request_uri}"
+    redirect_to "#{protocol}://#{(ssl_host || request.host)}#{request.request_uri}"
     flash.keep
     return false
   end
