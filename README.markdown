@@ -8,7 +8,7 @@
  - running tests
  - ability to overwrite ssl_host, to make custom host changes e.g. `def ssl_host; request.sll? ? 'xxx.com' : 'yyy.com';end`
 
-` script/plugin install git://github.com/grosser/ssl_requirement.git `
+` script/plugin install git://github.com/philsmy/ssl_requirement.git`
 
 
 SSL Requirement
